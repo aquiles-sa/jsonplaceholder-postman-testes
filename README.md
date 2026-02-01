@@ -79,6 +79,5 @@ Essas limitações foram consideradas na criação dos casos de teste.
 
 ## 👤 Autor
 
-**Aquiles Araújo**  
-Estudante de Engenharia de Software  
+**Aquiles Araujo**  
 Foco em QA / Testes de Software
