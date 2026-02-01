@@ -1,0 +1,387 @@
+{
+  "info": {
+    "_postman_id": "1eca17b4-1d02-465e-b99c-8a6868b7a517",
+    "name": "JSONPlaceholder-project-tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33962338"
+  },
+  "item": [
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "listPosts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Body response returns an array\", function() {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    pm.expect(responseBody).to.be.an('array');\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"Each post has required fields\", function() {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    const requiredFields = [\"userId\", \"id\", \"title\", \"body\"];\r",
+                  "\r",
+                  "    responseBody.forEach(post => {\r",
+                  "        requiredFields.forEach(field => {\r",
+                  "            pm.expect(post).to.have.property(field);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"'userId' and 'id' are numbers\", function() {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "\r",
+                  "    responseBody.forEach(post => {\r",
+                  "        pm.expect(post.userId).to.be.a(\"number\");\r",
+                  "        pm.expect(post.id).to.be.a(\"number\");\r",
+                  "    })\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"'title' and 'bosy' are strings\", function() {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "\r",
+                  "    responseBody.forEach(post => {\r",
+                  "        pm.expect(post.title).to.be.a(\"string\");\r",
+                  "        pm.expect(post.body).to.be.a(\"string\");\r",
+                  "    })\r",
+                  "})\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{posts_section}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{posts_section}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "viewSpecificPostById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Returns empty object when post id does not exist\", function() {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    pm.expect(responseBody).to.be.an(\"object\").that.is.empty;\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{posts_section}}/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{posts_section}}",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "viewSpecificPostByUserId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"All posts belong to the target userId\", function () {\r",
+                  "    const responseJson = pm.response.json();\r",
+                  "    const targetUserId = pm.request.url.query.get(\"userId\")\r",
+                  "\r",
+                  "    if (pm.expect(responseJson).to.be.not.empty) {\r",
+                  "        responseJson.forEach(post => {\r",
+                  "            pm.expect(post.userId).to.be.equal(Number(targetUserId))\r",
+                  "        });\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Invalid userId request\", function () {\r",
+                  "    const responseJson = pm.response.json();\r",
+                  "    pm.expect(responseJson).to.be.an(\"array\").to.be.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{posts_section}}?userId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{posts_section}}"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "addValidPost",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Post with all required fields\", function () {\r",
+                  "    const requiredFields = [\"userId\", \"title\", \"body\"];\r",
+                  "    const responseBody = [pm.response.json()];\r",
+                  "\r",
+                  "    responseBody.forEach(post => {\r",
+                  "        requiredFields.forEach(field => {\r",
+                  "            pm.expect(post).to.have.property(field);\r",
+                  "        });\r",
+                  "    })\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Filed have valid data types\", function () {\r",
+                  "    const responseJson = [pm.response.json()];\r",
+                  "\r",
+                  "    responseJson.forEach(post => {\r",
+                  "        pm.expect(post.userId).to.be.a(\"number\");\r",
+                  "        pm.expect(post.id).to.be.a(\"number\");\r",
+                  "        pm.expect(post.title).to.be.a(\"string\");\r",
+                  "        pm.expect(post.body).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 1,\r\n    \"title\": \"new title again\",\r\n    \"body\": \"this is a new post body. it should be unique and not match any existing posts. it should also be long enough to test the response body. it should also be long enough to\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{posts_section}}?userId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{posts_section}}"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "editPost",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Post with all required fields\", function () {\r",
+                  "    const requiredFields = [\"userId\", \"title\", \"body\"];\r",
+                  "    const responseBody = [pm.response.json()];\r",
+                  "\r",
+                  "    responseBody.forEach(post => {\r",
+                  "        requiredFields.forEach(field => {\r",
+                  "            pm.expect(post).to.have.property(field);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"invalid post to be edited\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404, 500])\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 2,\r\n    \"id\": 1,\r\n    \"title\": \"this title was edited\",\r\n    \"body\": \"new body here - 1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{posts_section}}/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{posts_section}}",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deletePost",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Delete invalid post\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{posts_section}}/10999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{posts_section}}",
+                "10999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "posts_section",
+      "value": ""
+    }
+  ]
+}
