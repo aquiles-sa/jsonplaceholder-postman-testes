@@ -71,10 +71,8 @@ Essas limitações foram consideradas na criação dos casos de teste.
 
 1. Importar a **Collection** no Postman
 2. Selecionar a Collection
-3. Executar manualmente as requisições  
-   **ou**
-4. Utilizar o **Collection Runner** do Postman
-
+3. Executar manualmente as requisições ou utilizar o **Collection Runner** do Postman
+4. 
 ---
 
 ## 👤 Autor
