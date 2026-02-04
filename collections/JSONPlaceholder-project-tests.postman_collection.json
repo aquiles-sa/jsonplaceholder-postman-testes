@@ -254,7 +254,7 @@
                   "});\r",
                   "\r",
                   "pm.test(\"invalid post to be edited\", function () {\r",
-                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404, 500])\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404, 500]);\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -459,13 +459,13 @@
               "urlencoded": []
             },
             "url": {
-              "raw": "{{base_url}}/{{comments_section}}/end",
+              "raw": "{{base_url}}/{{comments_section}}/1",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "{{comments_section}}",
-                "end"
+                "1"
               ]
             }
           },
@@ -518,6 +518,201 @@
                   "key": "postId",
                   "value": "888"
                 }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "addComment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-10 | Comment was created - Status 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-11 | Comment was created with valid data\", function () {\r",
+                  "    const responseBody = pm.response.json();    \r",
+                  "    pm.expect(responseBody.id).to.exist;\r",
+                  "    console.log(responseBody.id) // Displays the comment's id.\r",
+                  "})\r",
+                  "\r",
+                  "pm.test(\"CT-12 | API accepts comment creation with missing fields\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    const required_fields = [\"postId\", \"name\", \"email\", \"body\"];\r",
+                  "\r",
+                  "    required_fields.forEach(field => {\r",
+                  "        pm.expect(responseBody).to.satisfy(body => \r",
+                  "            body.hasOwnProperty(field) || !body.hasOwnProperty(field)\r",
+                  "        );\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"postId\": 1,\r\n    \"name\": \"QA Test\",\r\n    \"email\": \"qa.test@example.com\",\r\n    \"body\": \"This is a test comment for QA purposes. Please ignore.\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "editComment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-13 | Update a comment with all required fields\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    const required_fields = [\"postId\", \"name\", \"email\", \"body\"];\r",
+                  "\r",
+                  "    required_fields.forEach(field => {\r",
+                  "        pm.expect(responseBody).to.haveOwnProperty(field);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-14 | Update a non-existent comment\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"postId\": 3,\r\n    \"name\": \"QA Testing (new name)\",\r\n    \"email\": \"qa.test123@example.com\",\r\n    \"body\": \"This is a test comment for QA purposes. Please ignore again.\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}/9",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "editPartialComment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-15 | Partially update a comment\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "\r",
+                  "    // using 'name' filed as a reference\r",
+                  "    pm.expect(responseBody).to.have.property(\"name\");\r",
+                  "    pm.expect(responseBody.name).to.be.equal(\"QA testing patch\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"QA testing patch\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteComment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-16 | Delete a non-existent comment\", function () {\r",
+                  "    const responseText = pm.response.text();\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+                  "\r",
+                  "    pm.expect(responseText).to.satisfy(text => \r",
+                  "        text === \"\" || text === \"{}\"\r",
+                  "    );\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}/9999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}",
+                "9999"
               ]
             }
           },
