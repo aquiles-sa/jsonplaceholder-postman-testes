@@ -341,9 +341,209 @@
             "packages": {},
             "requests": {},
             "exec": [
-              "pm.test(\"Status code is 200\", function () {\r",
-              "    pm.response.to.have.status(200);\r",
-              "});"
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "listComments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-01 | Response returns an array\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    pm.expect(responseBody).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-02 | Valid object structure expected\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    const required_fields = [\"postId\", \"id\", \"name\", \"email\", \"body\"];\r",
+                  "\r",
+                  "    responseBody.forEach(comment => {\r",
+                  "        required_fields.forEach(field => {\r",
+                  "            pm.expect(comment).to.have.property(field);\r",
+                  "        });\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-03 | Valid data types expected\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "    \r",
+                  "    responseBody.forEach(comment => {\r",
+                  "        pm.expect(comment.postId).to.be.a(\"number\");\r",
+                  "        pm.expect(comment.id).to.be.a(\"number\");\r",
+                  "        pm.expect(comment.name).to.be.a(\"string\");\r",
+                  "        pm.expect(comment.email).to.be.a(\"string\");\r",
+                  "        pm.expect(comment.body).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-04 | Check if the response contains at least one comment\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.have.length.at.least(1);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "viewSpecificCommentById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-05 | Search for an existent comment by valid ID\", function () {\r",
+                  "    const comment_id_from_url = pm.request.url.path.slice(-1)[0];\r",
+                  "    pm.expect(pm.response.json().id).to.be.equal(Number(comment_id_from_url));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-06 | Search for an non-existent comment by invalid ID\", function () {\r",
+                  "    const status_code = pm.response.code;\r",
+                  "    pm.expect(status_code).to.have.oneOf([400, 404]);\r",
+                  "\r",
+                  "    if (status_code == 404) {\r",
+                  "        pm.expect(pm.response.json()).to.be.empty;\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-07 | Search comment by invalid data type ID\", function () {\r",
+                  "    const comment_id_from_url = pm.request.url.path.slice(-1)[0];\r",
+                  "\r",
+                  "    if (typeof comment_id_from_url !== \"number\") {\r",
+                  "        pm.expect(pm.response.code).to.be.equal(404);\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}/end",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}",
+                "end"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "viewSpecificCommentByPostId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CT-08 | Filter comments by valid postId\", function () {\r",
+                  "    const postId_url_param = pm.request.url.query.get(\"postId\");\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "\r",
+                  "    responseBody.forEach(comment => {\r",
+                  "        pm.expect(comment.postId).to.be.equal(Number(postId_url_param));\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CT-09 | Filter comments with non-existent postId\", function () {\r",
+                  "    const responseBody = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(responseBody).to.be.an(\"array\");\r",
+                  "    pm.expect(responseBody.length).to.be.equal(0);\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/{{comments_section}}?postId=888",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{comments_section}}"
+              ],
+              "query": [
+                {
+                  "key": "postId",
+                  "value": "888"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
             ]
           }
         }
@@ -369,7 +569,9 @@
         "packages": {},
         "requests": {},
         "exec": [
-          ""
+          "pm.test(\"Status code is 200\", function () {\r",
+          "    pm.response.to.have.status(200);\r",
+          "});"
         ]
       }
     }
@@ -381,6 +583,10 @@
     },
     {
       "key": "posts_section",
+      "value": ""
+    },
+    {
+      "key": "comments_section",
       "value": ""
     }
   ]
